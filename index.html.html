@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alpha Radar — Market Intel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+  :root {
+    --charcoal: #26333C;
+    --teal: #00AECB;
+    --teal-dark: #006579;
+    --teal-50: #E5F7FA;
+    --bg: #ECF0F3;
+    --bg-secondary: #F6F8FA;
+    --white: #FFFFFF;
+    --gray: #717981;
+    --gray-light: #C8CDD2;
+    --gray-lighter: #E3E7EB;
+    --border: rgba(38, 51, 60, 0.08);
+    --border-strong: rgba(38, 51, 60, 0.16);
+    --warning-bg: #FFF4E0;
+    --warning-text: #8C5A00;
+    --success-bg: #E1F5EE;
+    --success-text: #0F6E56;
+    --info-bg: #E5F7FA;
+    --info-text: #006579;
+    --won-bg: #C0DD97;
+    --won-text: #173404;
+    --lost-bg: #F1EFE8;
+    --lost-text: #444441;
+    --danger: #C0392B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--charcoal); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 400; font-size: 14px; line-height: 1.5; min-height: 100vh; }
+  body { padding: 0; }
+  .serif { font-family: 'Instrument Serif', serif; font-weight: 400; font-style: normal; letter-spacing: -0.01em; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  input, select, textarea { font-family: inherit; font-size: 14px; color: var(--charcoal); }
+  a { color: inherit; text-decoration: none; }
+  [hidden] { display: none !important; }
+
+  /* === LOGIN === */
+  .login-screen { position: fixed; inset: 0; background: var(--charcoal); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 24px; }
+  .login-card { background: var(--white); padding: 48px 40px; border-radius: 4px; width: 360px; max-width: 100%; }
+  .login-brand { display: flex; align-items: baseline; gap: 8px; margin-bottom: 36px; }
+  .login-brand-mark { font-size: 22px; font-weight: 500; color: var(--charcoal); }
+  .login-brand-mark span { color: var(--teal); }
+  .login-brand-pipe { color: var(--gray-light); }
+  .login-brand-app { font-family: 'Instrument Serif', serif; font-size: 26px; font-style: italic; color: var(--teal-dark); }
+  .login-title { font-size: 13px; color: var(--gray); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; }
+  .login-subtitle { font-size: 18px; color: var(--charcoal); margin-bottom: 28px; line-height: 1.4; font-weight: 400; }
+  .login-form { display: flex; flex-direction: column; gap: 12px; }
+  .login-input { padding: 12px 14px; border: 1px solid var(--gray-lighter); background: var(--white); border-radius: 2px; transition: border-color 0.15s; }
+  .login-input:focus { outline: none; border-color: var(--teal); }
+  .login-button { padding: 12px 14px; background: var(--charcoal); color: var(--white); border-radius: 2px; font-weight: 500; font-size: 14px; letter-spacing: 0.02em; transition: background 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .login-button:hover { background: var(--teal-dark); }
+  .login-hint { font-size: 11px; color: var(--gray); margin-top: 16px; text-align: center; }
+  .login-error { color: var(--danger); font-size: 12px; margin-top: 8px; min-height: 16px; }
+
+  /* === HEADER === */
+  .header { background: var(--white); border-bottom: 1px solid var(--border); padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+  .brand { display: flex; align-items: baseline; gap: 10px; }
+  .brand-mark { font-size: 17px; font-weight: 500; color: var(--charcoal); letter-spacing: -0.01em; }
+  .brand-mark span { color: var(--teal); }
+  .brand-pipe { color: var(--gray-light); font-weight: 300; }
+  .brand-app { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 21px; color: var(--teal-dark); letter-spacing: -0.01em; }
+  .header-actions { display: flex; align-items: center; gap: 12px; }
+  .btn-primary { background: var(--teal); color: var(--white); padding: 8px 16px; border-radius: 2px; font-weight: 500; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s; letter-spacing: 0.01em; }
+  .btn-primary:hover { background: var(--teal-dark); }
+  .btn-secondary { background: transparent; color: var(--charcoal); padding: 8px 16px; border-radius: 2px; font-weight: 500; font-size: 13px; border: 1px solid var(--border-strong); display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; }
+  .btn-secondary:hover { background: var(--bg); border-color: var(--charcoal); }
+  .btn-icon-only { background: transparent; color: var(--gray); padding: 8px; border-radius: 2px; font-size: 18px; display: inline-flex; align-items: center; justify-content: center; transition: color 0.15s; }
+  .btn-icon-only:hover { color: var(--charcoal); }
+  .btn-danger { background: var(--danger); color: var(--white); padding: 8px 16px; border-radius: 2px; font-weight: 500; font-size: 13px; }
+  .btn-danger:hover { background: #9a2d22; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--teal-dark); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; letter-spacing: 0.02em; }
+  .sync-indicator { font-size: 11px; color: var(--gray); display: inline-flex; align-items: center; gap: 4px; }
+  .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success-text); }
+  .sync-dot.offline { background: var(--gray-light); }
+  .sync-dot.syncing { background: var(--warning-text); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* === MAIN === */
+  .main { padding: 24px 32px 48px; max-width: 1400px; margin: 0 auto; }
+
+  /* === FILTERS === */
+  .filter-bar { background: var(--white); border-radius: 4px; padding: 14px 18px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; border: 1px solid var(--border); }
+  .filter-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 2px; font-size: 12px; color: var(--charcoal); cursor: pointer; transition: all 0.15s; }
+  .filter-pill:hover { background: var(--bg); border-color: var(--border-strong); }
+  .filter-pill select { background: transparent; border: none; cursor: pointer; padding: 0; color: var(--charcoal); font-weight: 500; font-size: 12px; appearance: none; padding-right: 4px; }
+  .filter-pill select:focus { outline: none; }
+  .filter-pill i { color: var(--gray); font-size: 14px; }
+  .filter-pill .label { color: var(--gray); margin-right: 2px; }
+  .filter-spacer { flex: 1; }
+  .filter-reset { font-size: 12px; color: var(--gray); cursor: pointer; padding: 4px 8px; transition: color 0.15s; }
+  .filter-reset:hover { color: var(--teal-dark); }
+  .filter-date-input { background: transparent; border: none; padding: 0; color: var(--charcoal); font-weight: 500; font-size: 12px; cursor: pointer; }
+  .filter-date-input:focus { outline: none; }
+
+  /* === KPIs === */
+  .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi-card { background: var(--white); padding: 20px 22px; border-radius: 4px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+  .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--teal); opacity: 0; transition: opacity 0.2s; }
+  .kpi-card.accent::before { opacity: 1; }
+  .kpi-label { font-size: 11px; color: var(--gray); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; margin-bottom: 8px; }
+  .kpi-value { font-family: 'Instrument Serif', serif; font-size: 44px; line-height: 1; color: var(--charcoal); letter-spacing: -0.02em; }
+  .kpi-detail { font-size: 12px; color: var(--gray); margin-top: 6px; }
+  .kpi-detail strong { color: var(--charcoal); font-weight: 500; }
+
+  /* === LIST === */
+  .section-title { font-size: 11px; font-weight: 500; color: var(--gray); text-transform: uppercase; letter-spacing: 0.08em; margin: 8px 0 12px; display: flex; justify-content: space-between; align-items: center; }
+  .section-title .count { color: var(--charcoal); font-weight: 600; }
+
+  .fiche-list { display: flex; flex-direction: column; gap: 8px; }
+  .fiche { background: var(--white); border: 1px solid var(--border); border-radius: 4px; padding: 16px 20px; transition: all 0.15s; cursor: pointer; position: relative; }
+  .fiche:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+  .fiche.is-new::after { content: ''; position: absolute; top: 14px; right: 14px; width: 8px; height: 8px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 0 3px rgba(0, 174, 203, 0.15); }
+  .fiche-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 10px; padding-right: 16px; }
+  .fiche-client-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .fiche-client { font-size: 16px; font-weight: 600; color: var(--charcoal); letter-spacing: -0.01em; }
+  .action-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 3px 8px; background: var(--bg-secondary); border-radius: 2px; color: var(--gray); font-weight: 500; }
+  .action-tag i { font-size: 12px; }
+  .new-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; padding: 2px 8px; background: var(--teal); color: var(--white); border-radius: 2px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .fiche-meta { font-size: 12px; color: var(--gray); margin-bottom: 10px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .fiche-meta-item { display: inline-flex; align-items: center; gap: 4px; }
+  .fiche-meta-item i { font-size: 13px; }
+  .fiche-meta-sep { color: var(--gray-light); }
+  .fiche-desc { font-size: 14px; color: var(--charcoal); line-height: 1.55; margin: 0 0 10px; }
+  .fiche-action { font-size: 13px; color: var(--charcoal); padding: 10px 12px; background: var(--bg-secondary); border-radius: 2px; border-left: 2px solid var(--teal); }
+  .fiche-action-label { font-weight: 600; color: var(--teal-dark); text-transform: uppercase; font-size: 10px; letter-spacing: 0.08em; margin-right: 8px; display: inline-block; }
+  .fiche-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 11px; color: var(--gray); }
+  .fiche-comments-link { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; transition: color 0.15s; }
+  .fiche-comments-link:hover { color: var(--teal-dark); }
+
+  /* === BADGES === */
+  .badge { font-size: 11px; padding: 4px 10px; border-radius: 2px; font-weight: 500; white-space: nowrap; letter-spacing: 0.02em; }
+  .badge-nouvelle { background: var(--info-bg); color: var(--info-text); }
+  .badge-prise-en-compte { background: var(--warning-bg); color: var(--warning-text); }
+  .badge-action-engagee { background: var(--success-bg); color: var(--success-text); }
+  .badge-closed-gagne { background: var(--won-bg); color: var(--won-text); }
+  .badge-closed-perdu { background: var(--lost-bg); color: var(--lost-text); }
+  .badge-closed-sans-suite { background: var(--lost-bg); color: var(--lost-text); }
+
+  /* === MODAL === */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(38, 51, 60, 0.5); display: flex; align-items: flex-start; justify-content: center; z-index: 50; padding: 48px 24px; overflow-y: auto; }
+  .modal { background: var(--white); border-radius: 4px; width: 100%; max-width: 720px; overflow: hidden; animation: slideUp 0.2s ease-out; }
+  .modal.modal-small { max-width: 420px; }
+  .modal.modal-large { max-width: 920px; }
+  @keyframes slideUp { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-header { padding: 20px 28px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .modal-title { font-size: 17px; font-weight: 600; color: var(--charcoal); letter-spacing: -0.01em; display: flex; align-items: center; gap: 10px; }
+  .modal-close { color: var(--gray); padding: 4px; transition: color 0.15s; }
+  .modal-close:hover { color: var(--charcoal); }
+  .modal-body { padding: 24px 28px; }
+  .modal-footer { padding: 16px 28px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: var(--bg-secondary); }
+
+  /* === FORM === */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-field { display: flex; flex-direction: column; gap: 6px; }
+  .form-field-full { grid-column: 1 / -1; }
+  .form-label { font-size: 11px; color: var(--gray); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; }
+  .form-label-required::after { content: ' *'; color: var(--teal); }
+  .form-control { padding: 10px 12px; background: var(--white); border: 1px solid var(--gray-lighter); border-radius: 2px; font-size: 14px; color: var(--charcoal); transition: border-color 0.15s; }
+  .form-control:focus { outline: none; border-color: var(--teal); }
+  textarea.form-control { resize: vertical; min-height: 80px; font-family: inherit; line-height: 1.5; }
+  select.form-control { appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2212%22%20height%3D%228%22%20viewBox%3D%220%200%2012%208%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M1%201.5L6%206.5L11%201.5%22%20stroke%3D%22%23717981%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; }
+
+  /* === DETAIL & COMMENTS === */
+  .detail-meta { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--gray); margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .detail-meta-item { display: inline-flex; align-items: center; gap: 4px; }
+  .detail-section { margin-bottom: 20px; }
+  .detail-section-label { font-size: 11px; color: var(--gray); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; margin-bottom: 8px; }
+  .detail-desc { font-size: 14px; color: var(--charcoal); line-height: 1.6; }
+  .detail-action { font-size: 14px; color: var(--charcoal); padding: 14px 16px; background: var(--bg-secondary); border-radius: 2px; border-left: 2px solid var(--teal); line-height: 1.55; }
+  .comments-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
+  .comment { display: flex; gap: 12px; }
+  .comment-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--info-bg); color: var(--info-text); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; flex-shrink: 0; letter-spacing: 0.02em; }
+  .comment-body { flex: 1; }
+  .comment-head { font-size: 12px; color: var(--gray); margin-bottom: 3px; display: flex; align-items: center; gap: 8px; }
+  .comment-author { color: var(--charcoal); font-weight: 500; }
+  .comment-text { font-size: 13px; color: var(--charcoal); line-height: 1.55; }
+  .comment-notify { font-size: 11px; color: var(--teal-dark); display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; border: 1px solid var(--border); border-radius: 2px; text-decoration: none; transition: all 0.15s; }
+  .comment-notify:hover { background: var(--teal-50); border-color: var(--teal); }
+  .comment-empty { font-size: 13px; color: var(--gray); font-style: italic; padding: 12px 0; }
+  .comment-form { display: grid; grid-template-columns: 180px 1fr auto; gap: 8px; align-items: flex-start; margin-top: 12px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .comment-form input, .comment-form select, .comment-form textarea { padding: 8px 10px; border: 1px solid var(--gray-lighter); border-radius: 2px; font-size: 13px; background: var(--white); }
+  .comment-form textarea { resize: vertical; min-height: 38px; font-family: inherit; line-height: 1.5; }
+  .comment-form button { padding: 8px 14px; background: var(--charcoal); color: var(--white); border-radius: 2px; font-weight: 500; font-size: 13px; }
+  .comment-form button:hover { background: var(--teal-dark); }
+  .status-edit-row { display: flex; align-items: center; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 13px; }
+  .status-edit-row label { color: var(--gray); }
+
+  /* === ADMIN === */
+  .admin-tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .admin-tab { padding: 10px 16px; font-size: 13px; color: var(--gray); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; font-weight: 500; transition: all 0.15s; }
+  .admin-tab.active { color: var(--charcoal); border-bottom-color: var(--teal); }
+  .admin-tab:hover { color: var(--charcoal); }
+  .admin-pane { min-height: 240px; }
+  .admin-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; max-height: 360px; overflow-y: auto; }
+  .admin-list-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 12px; background: var(--bg-secondary); border-radius: 2px; font-size: 13px; }
+  .admin-list-item-text { color: var(--charcoal); }
+  .admin-list-empty { color: var(--gray); font-style: italic; padding: 12px; text-align: center; font-size: 13px; }
+  .admin-list-remove { color: var(--gray); padding: 4px 8px; font-size: 13px; cursor: pointer; transition: color 0.15s; border-radius: 2px; }
+  .admin-list-remove:hover { color: var(--danger); }
+  .admin-add { display: flex; gap: 8px; }
+  .admin-add input { flex: 1; padding: 8px 12px; border: 1px solid var(--gray-lighter); border-radius: 2px; font-size: 13px; }
+  .admin-add input:focus { outline: none; border-color: var(--teal); }
+  .admin-add button { padding: 8px 14px; background: var(--charcoal); color: var(--white); border-radius: 2px; font-weight: 500; font-size: 13px; }
+  .admin-add button:hover { background: var(--teal-dark); }
+  .admin-actions-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+  .admin-section-title { font-size: 13px; font-weight: 600; color: var(--charcoal); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .admin-section-help { font-size: 12px; color: var(--gray); margin-bottom: 14px; }
+  .admin-info-box { background: var(--bg-secondary); padding: 12px 14px; border-radius: 2px; font-size: 12px; color: var(--gray); border-left: 2px solid var(--teal); margin-bottom: 16px; line-height: 1.5; }
+  .admin-info-box strong { color: var(--charcoal); }
+  .admin-info-box code { background: var(--white); padding: 1px 6px; border-radius: 2px; font-family: 'SF Mono', Consolas, monospace; font-size: 11px; }
+
+  /* === WRAP-UP === */
+  .wrapup-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 60; overflow-y: auto; }
+  .wrapup-header { background: var(--charcoal); color: var(--white); padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 5; }
+  .wrapup-header-title { display: flex; align-items: baseline; gap: 10px; }
+  .wrapup-header-title .brand-app { color: var(--teal); }
+  .wrapup-header-title .brand-mark { color: var(--white); }
+  .wrapup-header-actions { display: flex; gap: 10px; }
+  .wrapup-btn { background: var(--white); color: var(--charcoal); padding: 8px 14px; border-radius: 2px; font-weight: 500; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s; }
+  .wrapup-btn:hover { background: var(--bg); }
+  .wrapup-btn-secondary { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.3); }
+  .wrapup-btn-secondary:hover { background: rgba(255,255,255,0.1); }
+  .wrapup-content { max-width: 880px; margin: 0 auto; padding: 32px; background: var(--white); margin-top: 24px; margin-bottom: 24px; border: 1px solid var(--border); }
+  .wrapup-cover { padding-bottom: 32px; border-bottom: 2px solid var(--teal); margin-bottom: 32px; }
+  .wrapup-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--teal-dark); font-weight: 600; margin-bottom: 8px; }
+  .wrapup-title { font-family: 'Instrument Serif', serif; font-size: 42px; color: var(--charcoal); letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 12px; }
+  .wrapup-period { font-size: 14px; color: var(--gray); }
+  .wrapup-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 24px 0 0; }
+  .wrapup-stat { padding: 14px; background: var(--bg-secondary); border-radius: 2px; }
+  .wrapup-stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray); margin-bottom: 4px; font-weight: 500; }
+  .wrapup-stat-value { font-family: 'Instrument Serif', serif; font-size: 32px; line-height: 1; color: var(--charcoal); }
+  .wrapup-section { margin-bottom: 32px; }
+  .wrapup-section-title { font-family: 'Instrument Serif', serif; font-size: 22px; color: var(--charcoal); margin-bottom: 4px; letter-spacing: -0.01em; }
+  .wrapup-section-subtitle { font-size: 12px; color: var(--gray); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+  .wrapup-fiche { padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .wrapup-fiche:last-child { border-bottom: none; }
+  .wrapup-fiche-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+  .wrapup-fiche-client { font-size: 15px; font-weight: 600; color: var(--charcoal); }
+  .wrapup-fiche-meta { font-size: 11px; color: var(--gray); margin-bottom: 6px; }
+  .wrapup-fiche-desc { font-size: 13px; color: var(--charcoal); line-height: 1.55; margin-bottom: 6px; }
+  .wrapup-fiche-action { font-size: 13px; color: var(--teal-dark); font-style: italic; }
+  .wrapup-empty { font-size: 13px; color: var(--gray); font-style: italic; padding: 12px 0; }
+  .wrapup-top-contributors { display: flex; gap: 16px; flex-wrap: wrap; }
+  .wrapup-contributor { background: var(--bg-secondary); padding: 12px 16px; border-radius: 2px; display: flex; align-items: center; gap: 10px; }
+  .wrapup-contributor-rank { font-family: 'Instrument Serif', serif; font-size: 24px; color: var(--teal-dark); line-height: 1; }
+  .wrapup-contributor-info { display: flex; flex-direction: column; }
+  .wrapup-contributor-name { font-size: 13px; font-weight: 500; color: var(--charcoal); }
+  .wrapup-contributor-count { font-size: 11px; color: var(--gray); }
+  .wrapup-footer { padding: 24px 32px; max-width: 880px; margin: 0 auto; text-align: center; font-size: 10px; color: var(--gray); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 500; }
+
+  /* === PRINT === */
+  @media print {
+    body { background: white; }
+    .wrapup-header, .header, .filter-bar, .kpi-row, .fiche-list, .main, .wrapup-btn { display: none !important; }
+    .wrapup-content { max-width: 100%; margin: 0; border: none; padding: 0; }
+    .wrapup-overlay { background: white; position: static; }
+    .wrapup-cover, .wrapup-section { page-break-inside: avoid; }
+  }
+
+  /* === SMALL SCREENS === */
+  @media (max-width: 900px) {
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .wrapup-stats { grid-template-columns: repeat(2, 1fr); }
+    .form-grid { grid-template-columns: 1fr; }
+    .header { padding: 12px 16px; }
+    .main { padding: 16px; }
+    .comment-form { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen" class="login-screen">
+  <div class="login-card">
+    <div class="login-brand">
+      <span class="login-brand-mark">⊕ Alpha<span>.</span></span>
+      <span class="login-brand-pipe">/</span>
+      <span class="login-brand-app">Radar</span>
+    </div>
+    <div class="login-title">Crowdsourced market intel</div>
+    <div class="login-subtitle">Connectez-vous pour partager une opportunité ou consulter le radar collectif.</div>
+    <form class="login-form" id="login-form">
+      <input class="login-input" type="password" id="login-password" placeholder="Mot de passe partagé" autocomplete="current-password" required>
+      <button class="login-button" type="submit">
+        <i class="ti ti-radar-2"></i>
+        Accéder à Alpha Radar
+      </button>
+      <div class="login-error" id="login-error"></div>
+    </form>
+    <div class="login-hint">Accès réservé Alpha FMC Paris</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" hidden>
+  <header class="header">
+    <div class="brand">
+      <span class="brand-mark">⊕ Alpha<span>.</span></span>
+      <span class="brand-pipe">/</span>
+      <span class="brand-app">Radar</span>
+    </div>
+    <div class="header-actions">
+      <span class="sync-indicator" id="sync-indicator"><span class="sync-dot offline" id="sync-dot"></span><span id="sync-label">Local</span></span>
+      <button class="btn-icon-only" id="btn-refresh" title="Rafraîchir"><i class="ti ti-refresh"></i></button>
+      <button class="btn-icon-only" id="btn-admin" title="Paramétrage"><i class="ti ti-settings"></i></button>
+      <button class="btn-secondary" id="btn-wrapup">
+        <i class="ti ti-file-export"></i>
+        Wrap-up
+      </button>
+      <button class="btn-primary" id="btn-new">
+        <i class="ti ti-plus"></i>
+        Nouvelle fiche
+      </button>
+      <div class="avatar" id="user-avatar">??</div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <div class="filter-bar">
+      <div class="filter-pill">
+        <i class="ti ti-calendar"></i>
+        <span class="label">Du</span>
+        <input type="date" class="filter-date-input" id="filter-date-from">
+        <span class="label">au</span>
+        <input type="date" class="filter-date-input" id="filter-date-to">
+      </div>
+      <div class="filter-pill">
+        <i class="ti ti-building"></i>
+        <span class="label">Client</span>
+        <select id="filter-client"><option value="">Tous</option></select>
+      </div>
+      <div class="filter-pill">
+        <i class="ti ti-flag"></i>
+        <span class="label">Statut</span>
+        <select id="filter-status"><option value="">Tous</option></select>
+      </div>
+      <div class="filter-pill">
+        <i class="ti ti-user"></i>
+        <span class="label">Owner</span>
+        <select id="filter-owner"><option value="">Tous</option></select>
+      </div>
+      <div class="filter-pill">
+        <i class="ti ti-target"></i>
+        <span class="label">Type</span>
+        <select id="filter-type"><option value="">Tous</option></select>
+      </div>
+      <div class="filter-spacer"></div>
+      <button class="filter-reset" id="filter-reset">Réinitialiser</button>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-card accent">
+        <div class="kpi-label">Fiches sur la période</div>
+        <div class="kpi-value" id="kpi-total">0</div>
+        <div class="kpi-detail" id="kpi-total-detail">— sur tous les clients</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">En cours de traitement</div>
+        <div class="kpi-value" id="kpi-progress">0</div>
+        <div class="kpi-detail" id="kpi-progress-detail"><strong>0</strong> prises en compte · <strong>0</strong> actions engagées</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Opportunités converties</div>
+        <div class="kpi-value" id="kpi-won">0</div>
+        <div class="kpi-detail" id="kpi-won-detail">Closed gagné sur la période</div>
+      </div>
+    </div>
+
+    <div class="section-title">
+      <span>Fiches récentes <span class="count" id="list-count">(0)</span></span>
+    </div>
+    <div class="fiche-list" id="fiche-list"></div>
+
+  </main>
+</div>
+
+<!-- MODAL NEW -->
+<div class="modal-overlay" id="modal-new" hidden>
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title"><i class="ti ti-plus"></i>Nouvelle fiche</div>
+      <button class="modal-close" data-close="modal-new"><i class="ti ti-x" style="font-size:18px"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="form-new">
+        <div class="form-grid">
+          <div class="form-field">
+            <label class="form-label form-label-required">Client</label>
+            <select class="form-control" name="client" required id="new-client"></select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Lieu</label>
+            <input class="form-control" type="text" name="lieu" placeholder="ex. Paris 9e">
+          </div>
+          <div class="form-field">
+            <label class="form-label form-label-required">Date</label>
+            <input class="form-control" type="date" name="date" required>
+          </div>
+          <div class="form-field">
+            <label class="form-label form-label-required">Owner</label>
+            <select class="form-control" name="owner" required id="new-owner"></select>
+          </div>
+          <div class="form-field">
+            <label class="form-label form-label-required">Type d'action</label>
+            <select class="form-control" name="type" required id="new-type"></select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Statut</label>
+            <select class="form-control" name="status" id="new-status"></select>
+          </div>
+          <div class="form-field form-field-full">
+            <label class="form-label form-label-required">Descriptif</label>
+            <textarea class="form-control" name="description" required placeholder="Contexte de l'info, source, niveau de maturité..."></textarea>
+          </div>
+          <div class="form-field form-field-full">
+            <label class="form-label">Action proposée</label>
+            <input class="form-control" type="text" name="action" placeholder="ex. Caler un café avec le DAF avant fin mai">
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" data-close="modal-new">Annuler</button>
+      <button class="btn-primary" id="btn-save-new">
+        <i class="ti ti-check"></i>
+        Partager la fiche
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETAIL -->
+<div class="modal-overlay" id="modal-detail" hidden>
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="detail-title-row"></div>
+      <button class="modal-close" data-close="modal-detail"><i class="ti ti-x" style="font-size:18px"></i></button>
+    </div>
+    <div class="modal-body" id="detail-body"></div>
+  </div>
+</div>
+
+<!-- MODAL ADMIN PASSWORD -->
+<div class="modal-overlay" id="modal-admin-pwd" hidden>
+  <div class="modal modal-small">
+    <div class="modal-header">
+      <div class="modal-title"><i class="ti ti-lock"></i>Accès paramétrage</div>
+      <button class="modal-close" data-close="modal-admin-pwd"><i class="ti ti-x" style="font-size:18px"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="form-admin-pwd">
+        <div class="form-field">
+          <label class="form-label">Mot de passe administrateur</label>
+          <input class="form-control" type="password" id="admin-pwd-input" autocomplete="current-password" required>
+        </div>
+        <div class="login-error" id="admin-pwd-error" style="margin-top: 8px;"></div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" data-close="modal-admin-pwd">Annuler</button>
+      <button class="btn-primary" id="btn-admin-pwd-submit">Valider</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ADMIN -->
+<div class="modal-overlay" id="modal-admin" hidden>
+  <div class="modal modal-large">
+    <div class="modal-header">
+      <div class="modal-title"><i class="ti ti-settings"></i>Paramétrage Alpha Radar</div>
+      <button class="modal-close" data-close="modal-admin"><i class="ti ti-x" style="font-size:18px"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="admin-tabs">
+        <div class="admin-tab active" data-tab="clients">Clients</div>
+        <div class="admin-tab" data-tab="users">Équipe</div>
+        <div class="admin-tab" data-tab="data">Données</div>
+      </div>
+
+      <!-- Tab Clients -->
+      <div class="admin-pane" id="pane-clients">
+        <div class="admin-section-title">Liste des clients</div>
+        <div class="admin-section-help">Ces noms apparaissent dans le dropdown « Client » à la saisie. Modifie-les ici pour garder une base propre.</div>
+        <div class="admin-list" id="admin-clients-list"></div>
+        <div class="admin-add">
+          <input type="text" id="admin-client-new" placeholder="Nouveau client (ex. La Banque Postale AM)">
+          <button id="admin-client-add-btn">Ajouter</button>
+        </div>
+      </div>
+
+      <!-- Tab Users -->
+      <div class="admin-pane" id="pane-users" hidden>
+        <div class="admin-section-title">Équipe Alpha FMC Paris</div>
+        <div class="admin-section-help">Ces noms apparaissent dans les dropdowns « Owner » et « Commentateur ». Ajoute ici les membres de l'équipe.</div>
+        <div class="admin-list" id="admin-users-list"></div>
+        <div class="admin-add">
+          <input type="text" id="admin-user-new" placeholder="Nouveau membre (ex. Hichem Erramli)">
+          <button id="admin-user-add-btn">Ajouter</button>
+        </div>
+      </div>
+
+      <!-- Tab Data -->
+      <div class="admin-pane" id="pane-data" hidden>
+        <div class="admin-info-box">
+          <strong>Sauvegarde manuelle recommandée :</strong> exporte les données régulièrement (1×/semaine minimum). Le fichier JSON peut être archivé sur Box ou un disque partagé.
+        </div>
+        <div class="admin-section-title">Sauvegarde / Restauration</div>
+        <div class="admin-actions-row">
+          <button class="btn-secondary" id="admin-export-btn">
+            <i class="ti ti-download"></i>
+            Exporter (JSON)
+          </button>
+          <label class="btn-secondary" style="cursor: pointer;">
+            <i class="ti ti-upload"></i>
+            Importer (JSON)
+            <input type="file" id="admin-import-input" accept=".json" hidden>
+          </label>
+        </div>
+        <div style="margin-top: 32px;">
+          <div class="admin-section-title" style="color: var(--danger);">Zone dangereuse</div>
+          <div class="admin-section-help">Cette action supprime toutes les fiches et commentaires. La sauvegarde Box reste votre seul recours.</div>
+          <button class="btn-danger" id="admin-reset-btn">
+            <i class="ti ti-trash"></i>
+            Réinitialiser toutes les fiches
+          </button>
+        </div>
+        <div style="margin-top: 32px;" id="admin-stats">
+          <div class="admin-section-title">Statistiques</div>
+          <div style="font-size: 13px; color: var(--gray); line-height: 1.8;" id="admin-stats-content"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" data-close="modal-admin">
+        <i class="ti ti-check"></i>
+        Fermer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- WRAP-UP -->
+<div class="wrapup-overlay" id="wrapup-overlay" hidden>
+  <div class="wrapup-header">
+    <div class="wrapup-header-title">
+      <span class="brand-mark">⊕ Alpha<span style="color:var(--teal)">.</span></span>
+      <span class="brand-app" style="font-family: 'Instrument Serif', serif; font-style: italic; font-size: 21px;">Radar</span>
+    </div>
+    <div class="wrapup-header-actions">
+      <button class="wrapup-btn-secondary wrapup-btn" id="wrapup-close">
+        <i class="ti ti-arrow-left"></i>
+        Retour
+      </button>
+      <button class="wrapup-btn" onclick="window.print()">
+        <i class="ti ti-printer"></i>
+        Imprimer / PDF
+      </button>
+    </div>
+  </div>
+  <div class="wrapup-content" id="wrapup-content"></div>
+  <div class="wrapup-footer">Strictly Confidential · Alpha FMC Paris</div>
+</div>
+
+<script>
+// =============================================================================
+// CONFIGURATION — modifier ces valeurs lors du déploiement
+// =============================================================================
+const PASSWORD = 'AlphaFMCRadar';
+const ADMIN_PASSWORD = 'AlphaFMCRadarAdmin2026';
+
+// JSONBin sync — laisser ces deux constantes vides pour rester en local-only.
+// Pour activer la synchronisation entre utilisateurs, renseigner les deux.
+// Plus d'infos dans le guide GUIDE-PROD.md
+const JSONBIN_API_KEY = '$2a$10$YirqpDEezN9RhMQaqGcTceWGknsZCcDir9xvZYXyeRf3G8BPVQdF.';
+const JSONBIN_BIN_ID = '6a03347dadc21f119a8c4468';
+const JSONBIN_BASE = 'https://api.jsonbin.io/v3';
+
+// =============================================================================
+// STORAGE KEYS
+// =============================================================================
+const STORAGE_KEY = 'alpha_radar_data_v1';
+const CONFIG_KEY = 'alpha_radar_config_v1';
+const USER_KEY = 'alpha_radar_user_v1';
+const LAST_VISIT_KEY = 'alpha_radar_last_visit_v1';
+
+// =============================================================================
+// DEFAULTS (utilisés si pas encore de config en mémoire)
+// =============================================================================
+const DEFAULT_USERS = [
+  'Vincent Mignon', 'Edouard', 'Soufian', 'Charles-Antoine Desjardins',
+  'Guillaume', 'Terri', 'Charles', 'Amine Mechraoui',
+  'Rémi De Besombes', 'Clément', 'Mehdi', 'Hichem Erramli'
+];
+const DEFAULT_CLIENTS = [
+  'Amundi Technology', 'Amundi AM', 'BNP Paribas AM', 'AXA IM', 'Carmignac',
+  'La Banque Postale AM', 'Natixis IM', 'Edmond de Rothschild AM',
+  'Lyxor / Amundi ETF', 'Ostrum AM', 'Mirova', 'La Française AM',
+  'CPR AM', 'Tikehau Capital', 'OFI Invest', 'Groupama AM'
+];
+
+const ACTION_TYPES = [
+  { name: 'Pitch', icon: 'ti-presentation' },
+  { name: 'Meeting', icon: 'ti-users' },
+  { name: 'Dîner', icon: 'ti-glass-full' },
+  { name: 'Veille', icon: 'ti-eye' },
+  { name: 'À discuter', icon: 'ti-message-circle' }
+];
+
+const STATUSES = [
+  'Nouvelle', 'Prise en compte', 'Action engagée',
+  'Closed gagné', 'Closed perdu', 'Closed sans suite'
+];
+
+// =============================================================================
+// MOCK DATA — utilisé uniquement à la toute première ouverture
+// =============================================================================
+const MOCK_FICHES = [
+  { id: 'f01', client: 'Amundi Technology', lieu: 'Paris 15e', date: '2026-05-12', owner: 'Rémi De Besombes', type: 'Pitch', status: 'Prise en compte', description: "DSI Amundi Tech évoque un projet de refonte du module Profitability Management, scope BUD / IT / R&D. Sujet identifié comme prioritaire pour 2026 mais pas encore d'AO formel.", action: "Capitaliser sur la proposition AO-2026-04-16 pour ouvrir une discussion en amont avec le sponsor BUD.", updatedAt: '2026-05-14T10:00:00.000Z', comments: [ { id: 'c01', author: 'Vincent Mignon', date: '2026-05-13', text: "Bien vu. Je récupère le contact côté BUD et je positionne un café avant fin mai." }, { id: 'c02', author: 'Edouard', date: '2026-05-14', text: "Je peux aider sur le packaging si tu veux, j'ai la dernière version de la propal sous la main." } ] },
+  { id: 'f02', client: 'BNP Paribas AM', lieu: 'Paris 9e', date: '2026-05-08', owner: 'Charles-Antoine Desjardins', type: 'Meeting', status: 'Nouvelle', description: "Head of Operations mentionne en off une réflexion sur l'externalisation du DMS sur deux custodians européens. Pas encore arbitré au COMEX, fenêtre courte de positionnement.", action: "Proposer un cadrage rapide (atelier 2h) sur les offres DMS du marché — on capitalise sur notre POV.", updatedAt: '2026-05-08T10:00:00.000Z', comments: [] },
+  { id: 'f03', client: 'AXA IM', lieu: 'La Défense', date: '2026-05-03', owner: 'Guillaume', type: 'Dîner', status: 'Action engagée', description: "AXA IM cherche un regard externe sur leur Target Operating Model post-rapprochement. Sujet sensible, en cours d'arbitrage chez le COO.", action: "Dîner stratégique programmé le 22/05 avec le COO + 2 associés Alpha.", updatedAt: '2026-05-06T10:00:00.000Z', comments: [ { id: 'c03', author: 'Hichem Erramli', date: '2026-05-06', text: "Top. Je m'aligne avec Vincent pour préparer un POV TOM AM avant le 20/05." } ] },
+  { id: 'f04', client: 'Carmignac', lieu: 'Paris 1er', date: '2026-04-28', owner: 'Amine Mechraoui', type: 'Veille', status: 'Closed gagné', description: "RFP imminent sur la refonte du reporting client, scope retail + institutionnel. Information remontée par un contact stagiaire ex-Carmignac.", action: "Proposition envoyée, gagnée — démarrage 03/06.", updatedAt: '2026-04-28T10:00:00.000Z', comments: [] },
+  { id: 'f05', client: 'La Banque Postale AM', lieu: 'Issy-les-Moulineaux', date: '2026-04-25', owner: 'Vincent Mignon', type: 'À discuter', status: 'Nouvelle', description: "Mention en off d'un chantier pricing transverse retail / institutionnel — remonté par le DAF lors d'un déjeuner. Cycle de décision long mais sujet large.", action: "Caler un café Vincent + DAF LBP fin mai pour qualifier.", updatedAt: '2026-04-25T10:00:00.000Z', comments: [] },
+  { id: 'f06', client: 'Natixis IM', lieu: 'Paris 13e', date: '2026-04-22', owner: 'Soufian', type: 'Pitch', status: 'Prise en compte', description: "Réflexion en cours sur la refonte de la plateforme data front-to-back, avec une dimension ESG. Sujet poussé par la nouvelle Head of Data.", action: "Proposer un short pitch sur notre approche data quality dans l'asset management.", updatedAt: '2026-04-24T10:00:00.000Z', comments: [ { id: 'c04', author: 'Guillaume', date: '2026-04-24', text: "J'ai un contact en commun avec elle, je peux faire l'intro si besoin." } ] },
+  { id: 'f07', client: 'Edmond de Rothschild AM', lieu: 'Paris 8e', date: '2026-04-18', owner: 'Charles', type: 'Meeting', status: 'Nouvelle', description: "Conversation avec le head of MO : envisage de revoir la chaîne matching & confirmation, dossier porté par le COO.", action: "Demander un meeting de cadrage sur leur MO target.", updatedAt: '2026-04-18T10:00:00.000Z', comments: [] },
+  { id: 'f08', client: 'Lyxor / Amundi ETF', lieu: 'Paris', date: '2026-04-15', owner: 'Mehdi', type: 'Veille', status: 'Closed sans suite', description: "Bruit de couloir sur un projet d'harmonisation des process ETF post-intégration Lyxor. Sujet identifié mais pas porté à court terme côté client.", action: "À garder en veille, re-test au Q3.", updatedAt: '2026-04-15T10:00:00.000Z', comments: [] },
+  { id: 'f09', client: 'Ostrum AM', lieu: 'Paris 13e', date: '2026-04-10', owner: 'Clément', type: 'Meeting', status: 'Action engagée', description: "Sujet de mise en conformité DORA — chantier identifié, sponsor COO, budget validé. Pas encore d'AO mais cadrage en cours.", action: "Meeting de cadrage planifié le 19/05 avec le RSSI et le COO.", updatedAt: '2026-04-10T10:00:00.000Z', comments: [] },
+  { id: 'f10', client: 'Mirova', lieu: 'Paris 2e', date: '2026-04-05', owner: 'Terri', type: 'À discuter', status: 'Nouvelle', description: "Réflexion stratégique sur l'élargissement des offres Article 9. Sujet remonté par un contact M&A externe.", action: "À qualifier avec Vincent — pas sûr du bon angle d'entrée.", updatedAt: '2026-04-05T10:00:00.000Z', comments: [] },
+  { id: 'f11', client: 'La Française AM', lieu: 'Paris 9e', date: '2026-03-30', owner: 'Rémi De Besombes', type: 'Pitch', status: 'Nouvelle', description: "Refonte du modèle de calcul des frais de gestion entre Fund et ManCo identifiée comme un sujet 2026. Source : entretien sortant Senior Consultant.", action: "Préparer un POV sur la chaîne pricing AM et envoyer en off avec un mot court.", updatedAt: '2026-03-30T10:00:00.000Z', comments: [] },
+  { id: 'f12', client: 'CPR AM', lieu: 'Paris 9e', date: '2026-03-25', owner: 'Edouard', type: 'Veille', status: 'Closed sans suite', description: "Tentative de prise de contact via un ancien client. Pas de réponse, sujet identifié mais pas de fenêtre actuelle.", action: "À re-tester via un autre canal au S2.", updatedAt: '2026-03-25T10:00:00.000Z', comments: [] },
+  { id: 'f13', client: 'Tikehau Capital', lieu: 'Paris 8e', date: '2026-03-20', owner: 'Hichem Erramli', type: 'Dîner', status: 'Prise en compte', description: "Discussion informelle sur leur stratégie d'élargissement de la gamme institutionnelle — besoin d'un regard externe sur leur TOM cible.", action: "Dîner à organiser fin mai avec un associé Alpha + le COO Tikehau.", updatedAt: '2026-03-22T10:00:00.000Z', comments: [ { id: 'c05', author: 'Vincent Mignon', date: '2026-03-22', text: "Je suis dispo, à caler. Tu me partages le contact ?" } ] },
+  { id: 'f14', client: 'OFI Invest', lieu: 'Paris 17e', date: '2026-03-15', owner: 'Amine Mechraoui', type: 'Meeting', status: 'Nouvelle', description: "Sujet inducements EU RIS — l'équipe Distribution se pose la question de l'impact sur leurs accords distributeurs (mise en œuvre 2027-2028).", action: "Proposer un meeting réglementaire pour partager notre lecture du texte final.", updatedAt: '2026-03-15T10:00:00.000Z', comments: [] },
+  { id: 'f15', client: 'Groupama AM', lieu: 'Paris 9e', date: '2026-03-10', owner: 'Soufian', type: 'Veille', status: 'Nouvelle', description: "Mention d'un projet middle-office externalisation, en phase exploratoire. Sponsor non identifié à ce stade.", action: "À qualifier — demander l'avis de Charles-Antoine sur la maturité.", updatedAt: '2026-03-10T10:00:00.000Z', comments: [] }
+];
+
+// =============================================================================
+// STATE
+// =============================================================================
+let fiches = [];
+let appUsers = [];
+let appClients = [];
+let currentUser = null;
+let lastVisit = null;
+let filterState = { dateFrom: '', dateTo: '', client: '', status: '', owner: '', type: '' };
+let isSyncEnabled = false;
+
+// =============================================================================
+// STORAGE / SYNC
+// =============================================================================
+function isJSONBinConfigured() {
+  return JSONBIN_API_KEY && JSONBIN_BIN_ID;
+}
+
+async function fetchFromBin() {
+  if (!isJSONBinConfigured()) return null;
+  setSyncStatus('syncing', 'Sync...');
+  try {
+    const res = await fetch(`${JSONBIN_BASE}/b/${JSONBIN_BIN_ID}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_API_KEY, 'X-Bin-Meta': 'false' }
+    });
+    if (!res.ok) throw new Error('Fetch failed: ' + res.status);
+    const data = await res.json();
+    setSyncStatus('online', 'Sync à jour');
+    return data;
+  } catch (e) {
+    console.warn('[Alpha Radar] JSONBin fetch error:', e);
+    setSyncStatus('offline', 'Hors-ligne');
+    return null;
+  }
+}
+
+async function pushToBin() {
+  if (!isJSONBinConfigured()) return;
+  setSyncStatus('syncing', 'Sync...');
+  try {
+    const payload = { fiches, clients: appClients, users: appUsers };
+    const res = await fetch(`${JSONBIN_BASE}/b/${JSONBIN_BIN_ID}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_API_KEY },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('Push failed: ' + res.status);
+    setSyncStatus('online', 'Sync à jour');
+  } catch (e) {
+    console.warn('[Alpha Radar] JSONBin push error:', e);
+    setSyncStatus('offline', 'Hors-ligne');
+  }
+}
+
+function setSyncStatus(state, label) {
+  const dot = document.getElementById('sync-dot');
+  const lbl = document.getElementById('sync-label');
+  if (!dot || !lbl) return;
+  dot.classList.remove('syncing', 'offline');
+  if (state === 'syncing') dot.classList.add('syncing');
+  if (state === 'offline') dot.classList.add('offline');
+  lbl.textContent = label;
+}
+
+async function loadData() {
+  // 1. Try JSONBin first
+  if (isJSONBinConfigured()) {
+    const remote = await fetchFromBin();
+    if (remote && Array.isArray(remote.fiches)) {
+      fiches = remote.fiches;
+      appClients = Array.isArray(remote.clients) ? remote.clients : [...DEFAULT_CLIENTS];
+      appUsers = Array.isArray(remote.users) ? remote.users : [...DEFAULT_USERS];
+      saveLocal();
+      return;
+    }
+  }
+  // 2. Fallback to localStorage
+  const storedFiches = localStorage.getItem(STORAGE_KEY);
+  const storedConfig = localStorage.getItem(CONFIG_KEY);
+  if (storedFiches) {
+    try { fiches = JSON.parse(storedFiches); } catch (e) { fiches = [...MOCK_FICHES]; }
+  } else {
+    fiches = [...MOCK_FICHES];
+  }
+  if (storedConfig) {
+    try {
+      const cfg = JSON.parse(storedConfig);
+      appClients = Array.isArray(cfg.clients) ? cfg.clients : [...DEFAULT_CLIENTS];
+      appUsers = Array.isArray(cfg.users) ? cfg.users : [...DEFAULT_USERS];
+    } catch (e) {
+      appClients = [...DEFAULT_CLIENTS];
+      appUsers = [...DEFAULT_USERS];
+    }
+  } else {
+    appClients = [...DEFAULT_CLIENTS];
+    appUsers = [...DEFAULT_USERS];
+  }
+  saveLocal();
+  // 3. If JSONBin configured but failed, retry push
+  if (isJSONBinConfigured()) await pushToBin();
+}
+
+function saveLocal() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(fiches));
+  localStorage.setItem(CONFIG_KEY, JSON.stringify({ clients: appClients, users: appUsers }));
+}
+
+async function saveData() {
+  saveLocal();
+  if (isJSONBinConfigured()) await pushToBin();
+}
+
+function loadUser() {
+  currentUser = localStorage.getItem(USER_KEY) || 'Hichem Erramli';
+}
+function loadLastVisit() {
+  lastVisit = localStorage.getItem(LAST_VISIT_KEY) || new Date(0).toISOString();
+}
+function updateLastVisit() {
+  localStorage.setItem(LAST_VISIT_KEY, new Date().toISOString());
+}
+
+// =============================================================================
+// LOGIN
+// =============================================================================
+document.getElementById('login-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const pwd = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  if (pwd === PASSWORD) {
+    errEl.textContent = '';
+    document.getElementById('login-screen').setAttribute('hidden', '');
+    document.getElementById('app').removeAttribute('hidden');
+    await init();
+  } else {
+    errEl.textContent = 'Mot de passe incorrect.';
+  }
+});
+
+// =============================================================================
+// INIT APP
+// =============================================================================
+async function init() {
+  loadUser();
+  loadLastVisit();
+  isSyncEnabled = isJSONBinConfigured();
+  setSyncStatus(isSyncEnabled ? 'syncing' : 'offline', isSyncEnabled ? 'Sync...' : 'Local');
+  await loadData();
+  setupAvatar();
+  setupFilters();
+  setupModals();
+  setDefaultDateRange();
+  render();
+  // After rendering, mark this visit as the new lastVisit
+  setTimeout(updateLastVisit, 1500);
+}
+
+function setupAvatar() {
+  const initials = currentUser.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
+  document.getElementById('user-avatar').textContent = initials;
+  document.getElementById('user-avatar').title = currentUser;
+}
+
+function setDefaultDateRange() {
+  const today = new Date();
+  const past = new Date();
+  past.setDate(today.getDate() - 60);
+  filterState.dateFrom = past.toISOString().slice(0, 10);
+  filterState.dateTo = today.toISOString().slice(0, 10);
+  document.getElementById('filter-date-from').value = filterState.dateFrom;
+  document.getElementById('filter-date-to').value = filterState.dateTo;
+}
+
+// =============================================================================
+// FILTERS
+// =============================================================================
+function setupFilters() {
+  fillSelect('filter-client', appClients, true);
+  fillSelect('filter-status', STATUSES, true);
+  fillSelect('filter-owner', appUsers, true);
+  fillSelect('filter-type', ACTION_TYPES.map(t => t.name), true);
+
+  document.getElementById('filter-date-from').addEventListener('change', (e) => { filterState.dateFrom = e.target.value; render(); });
+  document.getElementById('filter-date-to').addEventListener('change', (e) => { filterState.dateTo = e.target.value; render(); });
+  document.getElementById('filter-client').addEventListener('change', (e) => { filterState.client = e.target.value; render(); });
+  document.getElementById('filter-status').addEventListener('change', (e) => { filterState.status = e.target.value; render(); });
+  document.getElementById('filter-owner').addEventListener('change', (e) => { filterState.owner = e.target.value; render(); });
+  document.getElementById('filter-type').addEventListener('change', (e) => { filterState.type = e.target.value; render(); });
+
+  document.getElementById('filter-reset').addEventListener('click', () => {
+    filterState = { dateFrom: '', dateTo: '', client: '', status: '', owner: '', type: '' };
+    document.getElementById('filter-client').value = '';
+    document.getElementById('filter-status').value = '';
+    document.getElementById('filter-owner').value = '';
+    document.getElementById('filter-type').value = '';
+    setDefaultDateRange();
+    render();
+  });
+
+  document.getElementById('btn-refresh').addEventListener('click', async () => {
+    if (isSyncEnabled) {
+      await loadData();
+      render();
+    } else {
+      setSyncStatus('offline', 'Local');
+    }
+  });
+}
+
+function fillSelect(id, options, withEmpty) {
+  const sel = document.getElementById(id);
+  if (!sel) return;
+  sel.innerHTML = '';
+  if (withEmpty) {
+    const empty = document.createElement('option');
+    empty.value = '';
+    empty.textContent = 'Tous';
+    sel.appendChild(empty);
+  }
+  options.forEach(opt => {
+    const o = document.createElement('option');
+    o.value = opt;
+    o.textContent = opt;
+    sel.appendChild(o);
+  });
+}
+
+function fillSelectSimple(id, options) {
+  const sel = document.getElementById(id);
+  if (!sel) return;
+  sel.innerHTML = '';
+  options.forEach(opt => {
+    const o = document.createElement('option');
+    o.value = opt;
+    o.textContent = opt;
+    sel.appendChild(o);
+  });
+}
+
+// =============================================================================
+// FILTERING
+// =============================================================================
+function getFilteredFiches() {
+  return fiches.filter(f => {
+    if (filterState.dateFrom && f.date < filterState.dateFrom) return false;
+    if (filterState.dateTo && f.date > filterState.dateTo) return false;
+    if (filterState.client && f.client !== filterState.client) return false;
+    if (filterState.status && f.status !== filterState.status) return false;
+    if (filterState.owner && f.owner !== filterState.owner) return false;
+    if (filterState.type && f.type !== filterState.type) return false;
+    return true;
+  }).sort((a, b) => b.date.localeCompare(a.date));
+}
+
+// =============================================================================
+// RENDER
+// =============================================================================
+function render() {
+  const filtered = getFilteredFiches();
+  renderKPIs(filtered);
+  renderList(filtered);
+}
+
+function renderKPIs(items) {
+  document.getElementById('kpi-total').textContent = items.length;
+  const distinctClients = new Set(items.map(i => i.client)).size;
+  document.getElementById('kpi-total-detail').textContent = `Sur ${distinctClients} client${distinctClients > 1 ? 's' : ''}`;
+
+  const taken = items.filter(i => i.status === 'Prise en compte').length;
+  const engaged = items.filter(i => i.status === 'Action engagée').length;
+  document.getElementById('kpi-progress').textContent = taken + engaged;
+  document.getElementById('kpi-progress-detail').innerHTML = `<strong>${taken}</strong> prises en compte · <strong>${engaged}</strong> actions engagées`;
+
+  const won = items.filter(i => i.status === 'Closed gagné').length;
+  document.getElementById('kpi-won').textContent = won;
+}
+
+function renderList(items) {
+  const list = document.getElementById('fiche-list');
+  document.getElementById('list-count').textContent = `(${items.length})`;
+  if (items.length === 0) {
+    list.innerHTML = `<div style="background: var(--white); padding: 48px 24px; text-align: center; color: var(--gray); border-radius: 4px; border: 1px solid var(--border);">
+      <div style="font-family: 'Instrument Serif', serif; font-size: 24px; color: var(--charcoal); margin-bottom: 8px;">Pas de fiches sur cette période.</div>
+      <div style="font-size: 13px;">Modifie les filtres ou crée une nouvelle fiche pour ajouter de l'intel.</div>
+    </div>`;
+    return;
+  }
+  list.innerHTML = items.map(f => ficheHTML(f)).join('');
+  list.querySelectorAll('.fiche').forEach(el => {
+    el.addEventListener('click', () => openDetail(el.dataset.id));
+  });
+}
+
+function isFicheNew(f) {
+  if (!f.updatedAt) return false;
+  return f.updatedAt > lastVisit;
+}
+
+function ficheHTML(f) {
+  const typeData = ACTION_TYPES.find(t => t.name === f.type) || { icon: 'ti-target' };
+  const badgeClass = 'badge-' + f.status.replace(/ /g, '-').replace(/é/g, 'e').replace(/è/g, 'e').toLowerCase();
+  const commentsCount = (f.comments || []).length;
+  const newTag = isFicheNew(f) ? '<span class="new-tag">Nouveau</span>' : '';
+  return `
+  <div class="fiche ${isFicheNew(f) ? 'is-new' : ''}" data-id="${f.id}">
+    <div class="fiche-top">
+      <div class="fiche-client-row">
+        <span class="fiche-client">${escapeHTML(f.client)}</span>
+        <span class="action-tag"><i class="ti ${typeData.icon}"></i>${escapeHTML(f.type)}</span>
+        ${newTag}
+      </div>
+      <span class="badge ${badgeClass}">${escapeHTML(f.status)}</span>
+    </div>
+    <div class="fiche-meta">
+      <span class="fiche-meta-item"><i class="ti ti-calendar"></i>${formatDate(f.date)}</span>
+      <span class="fiche-meta-sep">·</span>
+      <span class="fiche-meta-item"><i class="ti ti-map-pin"></i>${escapeHTML(f.lieu || '—')}</span>
+      <span class="fiche-meta-sep">·</span>
+      <span class="fiche-meta-item"><i class="ti ti-user"></i>${escapeHTML(f.owner)}</span>
+    </div>
+    <p class="fiche-desc">${escapeHTML(f.description)}</p>
+    ${f.action ? `<div class="fiche-action"><span class="fiche-action-label">Action proposée</span>${escapeHTML(f.action)}</div>` : ''}
+    <div class="fiche-footer">
+      <span class="fiche-comments-link"><i class="ti ti-messages"></i>${commentsCount} commentaire${commentsCount !== 1 ? 's' : ''}</span>
+      <span><i class="ti ti-arrow-right" style="font-size: 12px; vertical-align: -1px"></i> Détail</span>
+    </div>
+  </div>`;
+}
+
+// =============================================================================
+// MODALS
+// =============================================================================
+function setupModals() {
+  document.getElementById('btn-new').addEventListener('click', openNew);
+  document.getElementById('btn-wrapup').addEventListener('click', openWrapup);
+  document.getElementById('btn-admin').addEventListener('click', openAdminPwd);
+  document.getElementById('wrapup-close').addEventListener('click', () => {
+    document.getElementById('wrapup-overlay').setAttribute('hidden', '');
+  });
+
+  document.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById(btn.dataset.close).setAttribute('hidden', '');
+    });
+  });
+
+  document.querySelectorAll('.modal-overlay').forEach(ov => {
+    ov.addEventListener('click', (e) => {
+      if (e.target === ov) ov.setAttribute('hidden', '');
+    });
+  });
+
+  fillSelectSimple('new-client', appClients);
+  fillSelectSimple('new-owner', appUsers);
+  fillSelectSimple('new-type', ACTION_TYPES.map(t => t.name));
+  fillSelectSimple('new-status', STATUSES);
+
+  document.getElementById('btn-save-new').addEventListener('click', saveNew);
+
+  // Admin password handlers
+  document.getElementById('btn-admin-pwd-submit').addEventListener('click', submitAdminPwd);
+  document.getElementById('form-admin-pwd').addEventListener('submit', (e) => { e.preventDefault(); submitAdminPwd(); });
+
+  // Admin tabs
+  document.querySelectorAll('.admin-tab').forEach(tab => {
+    tab.addEventListener('click', () => switchAdminTab(tab.dataset.tab));
+  });
+
+  // Admin actions
+  document.getElementById('admin-client-add-btn').addEventListener('click', addClient);
+  document.getElementById('admin-user-add-btn').addEventListener('click', addUser);
+  document.getElementById('admin-export-btn').addEventListener('click', exportData);
+  document.getElementById('admin-import-input').addEventListener('change', importData);
+  document.getElementById('admin-reset-btn').addEventListener('click', resetAll);
+}
+
+function openNew() {
+  // Repopulate selects in case admin changed lists
+  fillSelectSimple('new-client', appClients);
+  fillSelectSimple('new-owner', appUsers);
+  const form = document.getElementById('form-new');
+  form.reset();
+  form.elements.date.value = new Date().toISOString().slice(0, 10);
+  form.elements.owner.value = currentUser;
+  form.elements.status.value = 'Nouvelle';
+  form.elements.type.value = 'Meeting';
+  document.getElementById('modal-new').removeAttribute('hidden');
+}
+
+async function saveNew() {
+  const form = document.getElementById('form-new');
+  if (!form.reportValidity()) return;
+  const data = new FormData(form);
+  const newFiche = {
+    id: 'f' + Date.now(),
+    client: data.get('client'),
+    lieu: data.get('lieu') || '',
+    date: data.get('date'),
+    owner: data.get('owner'),
+    type: data.get('type'),
+    status: data.get('status') || 'Nouvelle',
+    description: data.get('description'),
+    action: data.get('action') || '',
+    updatedAt: new Date().toISOString(),
+    comments: []
+  };
+  fiches.unshift(newFiche);
+  await saveData();
+  document.getElementById('modal-new').setAttribute('hidden', '');
+  render();
+}
+
+function openDetail(id) {
+  const f = fiches.find(x => x.id === id);
+  if (!f) return;
+  const typeData = ACTION_TYPES.find(t => t.name === f.type) || { icon: 'ti-target' };
+  const badgeClass = 'badge-' + f.status.replace(/ /g, '-').replace(/é/g, 'e').replace(/è/g, 'e').toLowerCase();
+
+  document.getElementById('detail-title-row').innerHTML = `
+    <span style="display:flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+      <span>${escapeHTML(f.client)}</span>
+      <span class="action-tag"><i class="ti ${typeData.icon}"></i>${escapeHTML(f.type)}</span>
+      <span class="badge ${badgeClass}">${escapeHTML(f.status)}</span>
+    </span>
+  `;
+
+  const ownerEncoded = encodeURIComponent(f.owner);
+  const clientEncoded = encodeURIComponent(f.client);
+
+  const commentsHTML = (f.comments || []).length === 0
+    ? '<div class="comment-empty">Aucun commentaire pour le moment.</div>'
+    : f.comments.map(c => {
+        const subject = `Alpha Radar — commentaire sur ${f.client}`;
+        const body = `Bonjour ${f.owner},%0D%0A%0D%0AJ'ai laissé un commentaire sur ta fiche Alpha Radar concernant ${f.client} :%0D%0A%0D%0A"${encodeURIComponent(c.text)}"%0D%0A%0D%0A— ${encodeURIComponent(c.author)}`;
+        const mailtoHref = `mailto:?subject=${encodeURIComponent(subject)}&body=${body}`;
+        return `
+          <div class="comment">
+            <div class="comment-avatar">${initials(c.author)}</div>
+            <div class="comment-body">
+              <div class="comment-head">
+                <span class="comment-author">${escapeHTML(c.author)}</span>
+                <span>·</span>
+                <span>${formatDate(c.date)}</span>
+                <a href="${mailtoHref}" class="comment-notify" title="Notifier ${escapeAttr(f.owner)} par mail">
+                  <i class="ti ti-mail" style="font-size:12px"></i>
+                  Notifier ${escapeHTML(f.owner.split(' ')[0])}
+                </a>
+              </div>
+              <div class="comment-text">${escapeHTML(c.text)}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+  const userOptions = appUsers.map(u => `<option value="${escapeAttr(u)}">${escapeHTML(u)}</option>`).join('');
+  const statusOptions = STATUSES.map(s => `<option value="${escapeAttr(s)}" ${s === f.status ? 'selected' : ''}>${escapeHTML(s)}</option>`).join('');
+
+  document.getElementById('detail-body').innerHTML = `
+    <div class="detail-meta">
+      <span class="detail-meta-item"><i class="ti ti-calendar"></i>${formatDate(f.date)}</span>
+      <span class="detail-meta-item"><i class="ti ti-map-pin"></i>${escapeHTML(f.lieu || '—')}</span>
+      <span class="detail-meta-item"><i class="ti ti-user"></i>Owner : ${escapeHTML(f.owner)}</span>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-label">Descriptif</div>
+      <div class="detail-desc">${escapeHTML(f.description)}</div>
+    </div>
+    ${f.action ? `
+    <div class="detail-section">
+      <div class="detail-section-label">Action proposée</div>
+      <div class="detail-action">${escapeHTML(f.action)}</div>
+    </div>` : ''}
+
+    <div class="detail-section">
+      <div class="detail-section-label">Commentaires (${(f.comments || []).length})</div>
+      <div class="comments-list">${commentsHTML}</div>
+      <div class="comment-form">
+        <select id="new-comment-author">
+          <option value="">— Votre nom —</option>
+          ${userOptions}
+        </select>
+        <textarea id="new-comment-text" placeholder="Ajouter un commentaire ou se proposer pour l'action..."></textarea>
+        <button id="add-comment-btn">Publier</button>
+      </div>
+    </div>
+
+    <div class="status-edit-row">
+      <label>Mettre à jour le statut :</label>
+      <select class="form-control" id="edit-status" style="flex: 1; max-width: 240px;">${statusOptions}</select>
+      <button class="btn-secondary" id="save-status-btn">
+        <i class="ti ti-check"></i>
+        Enregistrer
+      </button>
+    </div>
+  `;
+
+  document.getElementById('add-comment-btn').addEventListener('click', () => addComment(f.id));
+  document.getElementById('save-status-btn').addEventListener('click', () => updateStatus(f.id));
+  document.getElementById('modal-detail').removeAttribute('hidden');
+}
+
+async function addComment(id) {
+  const author = document.getElementById('new-comment-author').value;
+  const text = document.getElementById('new-comment-text').value.trim();
+  if (!author) { alert('Sélectionnez votre nom avant de publier.'); return; }
+  if (!text) { alert('Saisissez un commentaire.'); return; }
+  const f = fiches.find(x => x.id === id);
+  if (!f) return;
+  if (!f.comments) f.comments = [];
+  f.comments.push({
+    id: 'c' + Date.now(),
+    author: author,
+    date: new Date().toISOString().slice(0, 10),
+    text: text
+  });
+  f.updatedAt = new Date().toISOString();
+  await saveData();
+  render();
+  openDetail(id);
+}
+
+async function updateStatus(id) {
+  const newStatus = document.getElementById('edit-status').value;
+  const f = fiches.find(x => x.id === id);
+  if (!f) return;
+  f.status = newStatus;
+  f.updatedAt = new Date().toISOString();
+  await saveData();
+  render();
+  openDetail(id);
+}
+
+// =============================================================================
+// ADMIN
+// =============================================================================
+function openAdminPwd() {
+  document.getElementById('admin-pwd-input').value = '';
+  document.getElementById('admin-pwd-error').textContent = '';
+  document.getElementById('modal-admin-pwd').removeAttribute('hidden');
+  setTimeout(() => document.getElementById('admin-pwd-input').focus(), 100);
+}
+
+function submitAdminPwd() {
+  const pwd = document.getElementById('admin-pwd-input').value;
+  const errEl = document.getElementById('admin-pwd-error');
+  if (pwd === ADMIN_PASSWORD) {
+    errEl.textContent = '';
+    document.getElementById('modal-admin-pwd').setAttribute('hidden', '');
+    openAdmin();
+  } else {
+    errEl.textContent = 'Mot de passe incorrect.';
+  }
+}
+
+function openAdmin() {
+  renderAdminClients();
+  renderAdminUsers();
+  renderAdminStats();
+  switchAdminTab('clients');
+  document.getElementById('modal-admin').removeAttribute('hidden');
+}
+
+function switchAdminTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  ['clients', 'users', 'data'].forEach(t => {
+    document.getElementById('pane-' + t).toggleAttribute('hidden', t !== tab);
+  });
+}
+
+function renderAdminClients() {
+  const list = document.getElementById('admin-clients-list');
+  if (appClients.length === 0) {
+    list.innerHTML = '<div class="admin-list-empty">Aucun client. Ajoute-en un ci-dessous.</div>';
+    return;
+  }
+  list.innerHTML = appClients.map(c => `
+    <div class="admin-list-item">
+      <span class="admin-list-item-text">${escapeHTML(c)}</span>
+      <span class="admin-list-remove" data-client="${escapeAttr(c)}"><i class="ti ti-x"></i> Retirer</span>
+    </div>
+  `).join('');
+  list.querySelectorAll('.admin-list-remove').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const c = btn.dataset.client;
+      if (!confirm(`Retirer "${c}" de la liste des clients ?`)) return;
+      appClients = appClients.filter(x => x !== c);
+      await saveData();
+      renderAdminClients();
+      refreshFilterDropdowns();
+    });
+  });
+}
+
+function renderAdminUsers() {
+  const list = document.getElementById('admin-users-list');
+  if (appUsers.length === 0) {
+    list.innerHTML = '<div class="admin-list-empty">Aucun utilisateur. Ajoute-en un ci-dessous.</div>';
+    return;
+  }
+  list.innerHTML = appUsers.map(u => `
+    <div class="admin-list-item">
+      <span class="admin-list-item-text">${escapeHTML(u)}</span>
+      <span class="admin-list-remove" data-user="${escapeAttr(u)}"><i class="ti ti-x"></i> Retirer</span>
+    </div>
+  `).join('');
+  list.querySelectorAll('.admin-list-remove').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const u = btn.dataset.user;
+      if (!confirm(`Retirer "${u}" de la liste des utilisateurs ?`)) return;
+      appUsers = appUsers.filter(x => x !== u);
+      await saveData();
+      renderAdminUsers();
+      refreshFilterDropdowns();
+    });
+  });
+}
+
+async function addClient() {
+  const input = document.getElementById('admin-client-new');
+  const val = input.value.trim();
+  if (!val) return;
+  // Fuzzy duplicate check
+  const lower = val.toLowerCase();
+  const existing = appClients.find(c => c.toLowerCase() === lower || c.toLowerCase().includes(lower) || lower.includes(c.toLowerCase()));
+  if (existing && existing.toLowerCase() !== lower) {
+    if (!confirm(`Un client similaire existe : "${existing}". Ajouter quand même "${val}" ?`)) return;
+  }
+  if (existing && existing.toLowerCase() === lower) {
+    alert('Ce client existe déjà.');
+    return;
+  }
+  appClients.push(val);
+  appClients.sort((a, b) => a.localeCompare(b));
+  input.value = '';
+  await saveData();
+  renderAdminClients();
+  refreshFilterDropdowns();
+}
+
+async function addUser() {
+  const input = document.getElementById('admin-user-new');
+  const val = input.value.trim();
+  if (!val) return;
+  if (appUsers.find(u => u.toLowerCase() === val.toLowerCase())) {
+    alert('Cet utilisateur existe déjà.');
+    return;
+  }
+  appUsers.push(val);
+  appUsers.sort((a, b) => a.localeCompare(b));
+  input.value = '';
+  await saveData();
+  renderAdminUsers();
+  refreshFilterDropdowns();
+}
+
+function refreshFilterDropdowns() {
+  const curClient = document.getElementById('filter-client').value;
+  const curOwner = document.getElementById('filter-owner').value;
+  fillSelect('filter-client', appClients, true);
+  fillSelect('filter-owner', appUsers, true);
+  if (appClients.includes(curClient)) document.getElementById('filter-client').value = curClient;
+  if (appUsers.includes(curOwner)) document.getElementById('filter-owner').value = curOwner;
+  fillSelectSimple('new-client', appClients);
+  fillSelectSimple('new-owner', appUsers);
+}
+
+function renderAdminStats() {
+  const totalFiches = fiches.length;
+  const totalComments = fiches.reduce((sum, f) => sum + (f.comments || []).length, 0);
+  const totalClients = new Set(fiches.map(f => f.client)).size;
+  const totalOwners = new Set(fiches.map(f => f.owner)).size;
+  const stored = localStorage.getItem(STORAGE_KEY) || '';
+  const sizeKb = (stored.length / 1024).toFixed(1);
+  document.getElementById('admin-stats-content').innerHTML = `
+    <div><strong style="color:var(--charcoal); font-weight: 500;">${totalFiches}</strong> fiches au total</div>
+    <div><strong style="color:var(--charcoal); font-weight: 500;">${totalComments}</strong> commentaires</div>
+    <div><strong style="color:var(--charcoal); font-weight: 500;">${totalClients}</strong> clients distincts dans les fiches</div>
+    <div><strong style="color:var(--charcoal); font-weight: 500;">${totalOwners}</strong> contributeurs distincts</div>
+    <div><strong style="color:var(--charcoal); font-weight: 500;">${sizeKb} Ko</strong> de données locales</div>
+    <div style="margin-top: 8px; font-size: 11px;">Mode : ${isJSONBinConfigured() ? '<strong style="color:var(--success-text)">Synchronisation activée</strong>' : '<strong>Local uniquement</strong> (modifier <code>JSONBIN_API_KEY</code> et <code>JSONBIN_BIN_ID</code> dans le code pour activer)'}</div>
+  `;
+}
+
+function exportData() {
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    version: 1,
+    fiches: fiches,
+    clients: appClients,
+    users: appUsers
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `alpha-radar-export-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+async function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (!confirm("Importer ce fichier remplacera toutes les données actuelles. Continuer ?")) {
+    e.target.value = '';
+    return;
+  }
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if (!Array.isArray(data.fiches)) throw new Error('Format invalide');
+    fiches = data.fiches;
+    if (Array.isArray(data.clients)) appClients = data.clients;
+    if (Array.isArray(data.users)) appUsers = data.users;
+    await saveData();
+    renderAdminClients();
+    renderAdminUsers();
+    renderAdminStats();
+    refreshFilterDropdowns();
+    render();
+    alert('Import réussi.');
+  } catch (err) {
+    alert('Erreur d\'import : ' + err.message);
+  }
+  e.target.value = '';
+}
+
+async function resetAll() {
+  if (!confirm('⚠️ Cette action supprime TOUTES les fiches et commentaires. Confirmer ?')) return;
+  if (!confirm('Vraiment ? Cette action est irréversible.')) return;
+  fiches = [];
+  await saveData();
+  renderAdminStats();
+  render();
+  alert('Toutes les fiches ont été supprimées.');
+}
+
+// =============================================================================
+// WRAP-UP
+// =============================================================================
+function openWrapup() {
+  const items = getFilteredFiches();
+  const periodLabel = `Du ${formatDate(filterState.dateFrom)} au ${formatDate(filterState.dateTo)}`;
+
+  const groups = {};
+  STATUSES.forEach(s => groups[s] = []);
+  items.forEach(i => { groups[i.status] = groups[i.status] || []; groups[i.status].push(i); });
+
+  const counts = {};
+  items.forEach(i => { counts[i.owner] = (counts[i.owner] || 0) + 1; });
+  const topContribs = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 3);
+
+  const distinctClients = new Set(items.map(i => i.client)).size;
+  const won = items.filter(i => i.status === 'Closed gagné').length;
+  const engaged = items.filter(i => i.status === 'Action engagée').length;
+
+  const renderGroup = (label, eyebrow) => {
+    const g = groups[label] || [];
+    if (g.length === 0) return '';
+    return `
+      <div class="wrapup-section">
+        <div class="wrapup-section-title">${label}</div>
+        <div class="wrapup-section-subtitle">${eyebrow} · ${g.length} fiche${g.length > 1 ? 's' : ''}</div>
+        ${g.map(f => `
+          <div class="wrapup-fiche">
+            <div class="wrapup-fiche-top">
+              <span class="wrapup-fiche-client">${escapeHTML(f.client)} · ${escapeHTML(f.type)}</span>
+              <span style="font-size: 11px; color: var(--gray);">${formatDate(f.date)}</span>
+            </div>
+            <div class="wrapup-fiche-meta">${escapeHTML(f.owner)} · ${escapeHTML(f.lieu || '—')}</div>
+            <div class="wrapup-fiche-desc">${escapeHTML(f.description)}</div>
+            ${f.action ? `<div class="wrapup-fiche-action">→ ${escapeHTML(f.action)}</div>` : ''}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  };
+
+  const contributorsHTML = topContribs.length === 0
+    ? '<div class="wrapup-empty">Aucun contributeur sur la période.</div>'
+    : `<div class="wrapup-top-contributors">
+        ${topContribs.map((c, idx) => `
+          <div class="wrapup-contributor">
+            <div class="wrapup-contributor-rank">${idx + 1}</div>
+            <div class="wrapup-contributor-info">
+              <div class="wrapup-contributor-name">${escapeHTML(c[0])}</div>
+              <div class="wrapup-contributor-count">${c[1]} fiche${c[1] > 1 ? 's' : ''}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>`;
+
+  document.getElementById('wrapup-content').innerHTML = `
+    <div class="wrapup-cover">
+      <div class="wrapup-eyebrow">Wrap-up · Crowdsourced market intel</div>
+      <div class="wrapup-title">${items.length} fiche${items.length > 1 ? 's' : ''} d'intel partagée${items.length > 1 ? 's' : ''}<br><span style="color: var(--teal-dark)">sur la période</span></div>
+      <div class="wrapup-period">${periodLabel}</div>
+      <div class="wrapup-stats">
+        <div class="wrapup-stat">
+          <div class="wrapup-stat-label">Fiches</div>
+          <div class="wrapup-stat-value">${items.length}</div>
+        </div>
+        <div class="wrapup-stat">
+          <div class="wrapup-stat-label">Clients couverts</div>
+          <div class="wrapup-stat-value">${distinctClients}</div>
+        </div>
+        <div class="wrapup-stat">
+          <div class="wrapup-stat-label">Actions engagées</div>
+          <div class="wrapup-stat-value">${engaged}</div>
+        </div>
+        <div class="wrapup-stat">
+          <div class="wrapup-stat-label">Closed gagné</div>
+          <div class="wrapup-stat-value">${won}</div>
+        </div>
+      </div>
+    </div>
+
+    ${items.length === 0 ? '<div class="wrapup-empty">Aucune fiche sur la période sélectionnée. Modifie les filtres pour élargir.</div>' : `
+      ${renderGroup('Action engagée', 'Opportunités en cours')}
+      ${renderGroup('Prise en compte', 'À suivre côté management')}
+      ${renderGroup('Nouvelle', 'À qualifier')}
+      ${renderGroup('Closed gagné', 'Conversions')}
+      ${renderGroup('Closed perdu', 'Pertes')}
+      ${renderGroup('Closed sans suite', 'Veille / abandons')}
+
+      <div class="wrapup-section">
+        <div class="wrapup-section-title">Top contributeurs</div>
+        <div class="wrapup-section-subtitle">Sur la période sélectionnée</div>
+        ${contributorsHTML}
+      </div>
+    `}
+  `;
+
+  document.getElementById('wrapup-overlay').removeAttribute('hidden');
+}
+
+// =============================================================================
+// HELPERS
+// =============================================================================
+function escapeHTML(s) {
+  if (s === null || s === undefined) return '';
+  return String(s).replace(/[&<>"']/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[m]));
+}
+function escapeAttr(s) { return escapeHTML(s); }
+function formatDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  if (isNaN(d)) return iso;
+  const months = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+function initials(name) {
+  return name.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
+}
+</script>
+</body>
+</html>
